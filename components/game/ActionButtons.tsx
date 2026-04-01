@@ -2,12 +2,12 @@
 
 import type { DecisionCategory } from '@/lib/types'
 
-const ACTIONS: { category: DecisionCategory; label: string; color: string }[] = [
-  { category: 'hit', label: 'Hit', color: '#1e7a2a' },
-  { category: 'stand', label: 'Stand', color: '#a02020' },
-  { category: 'double', label: 'Double', color: '#1a4fa0' },
-  { category: 'split', label: 'Split', color: '#8a5c10' },
-  { category: 'surrender', label: 'Surrender', color: '#5c2880' },
+const ACTIONS: { category: DecisionCategory; label: string; bg: string }[] = [
+  { category: 'hit',       label: 'Hit',       bg: '#1a6627' },
+  { category: 'stand',     label: 'Stand',     bg: '#8b1a1a' },
+  { category: 'double',    label: 'Double',    bg: '#1a3f8a' },
+  { category: 'split',     label: 'Split',     bg: '#7a4d0a' },
+  { category: 'surrender', label: 'Surrender', bg: '#4a1f6e' },
 ]
 
 interface Props {
@@ -18,15 +18,15 @@ interface Props {
 export default function ActionButtons({ available, onAction }: Props) {
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex gap-2">
-        {ACTIONS.slice(0, 2).map(({ category, label, color }) => (
-          <ActionButton key={category} label={label} color={color}
+      <div className="grid grid-cols-2 gap-2">
+        {ACTIONS.slice(0, 2).map(({ category, label, bg }) => (
+          <ActionButton key={category} label={label} bg={bg}
             enabled={available.has(category)} onClick={() => onAction(category)} />
         ))}
       </div>
-      <div className="flex gap-2">
-        {ACTIONS.slice(2).map(({ category, label, color }) => (
-          <ActionButton key={category} label={label} color={color}
+      <div className="grid grid-cols-3 gap-2">
+        {ACTIONS.slice(2).map(({ category, label, bg }) => (
+          <ActionButton key={category} label={label} bg={bg}
             enabled={available.has(category)} onClick={() => onAction(category)} />
         ))}
       </div>
@@ -34,15 +34,15 @@ export default function ActionButtons({ available, onAction }: Props) {
   )
 }
 
-function ActionButton({ label, color, enabled, onClick }: {
-  label: string; color: string; enabled: boolean; onClick: () => void
+function ActionButton({ label, bg, enabled, onClick }: {
+  label: string; bg: string; enabled: boolean; onClick: () => void
 }) {
   return (
     <button
       onClick={onClick}
       disabled={!enabled}
-      className="flex-1 py-4 rounded-2xl font-bold text-lg text-white transition"
-      style={{ backgroundColor: enabled ? color : 'rgba(255,255,255,0.06)', opacity: enabled ? 1 : 0.4 }}
+      className="py-3.5 rounded-xl font-semibold text-sm text-white transition-opacity"
+      style={{ backgroundColor: enabled ? bg : 'rgba(255,255,255,0.05)', opacity: enabled ? 1 : 0.35 }}
     >
       {label}
     </button>
