@@ -30,7 +30,7 @@ export default function LandingPage() {
       sessionStorage.setItem('bbs_user', JSON.stringify(data.user))
       router.push('/game')
     } catch (err) {
-      setError('Could not connect. Please try again.')
+      setError(err instanceof Error ? err.message : String(err))
       setLoading(false)
     }
   }
