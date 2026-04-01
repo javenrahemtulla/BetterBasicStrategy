@@ -1,21 +1,19 @@
 import { createClient } from '@supabase/supabase-js'
+import type { Database } from './database.types'
 
-function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  if (!url || !anonKey) throw new Error('Supabase env vars not set')
-  return createClient(url, anonKey)
-}
-
-let _client: ReturnType<typeof createClient> | null = null
+let _client: ReturnType<typeof createClient<Database>> | null = null
 
 export function getClient() {
-  if (!_client) _client = getSupabase()
+  if (!_client) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (!url || !anonKey) throw new Error('Supabase env vars not set')
+    _client = createClient<Database>(url, anonKey)
+  }
   return _client
 }
 
-// Convenience alias
-export const supabase = new Proxy({} as ReturnType<typeof createClient>, {
+export const supabase = new Proxy({} as ReturnType<typeof createClient<Database>>, {
   get(_, prop) {
     return (getClient() as unknown as Record<string, unknown>)[prop as string]
   },
