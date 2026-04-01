@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-felt: #0f3818;
+  --color-felt-dark: #0a2810;
+  --color-cream: #f9f5e3;
+  --color-gold: #b89a4d;
+  --color-gold-dim: #806c35;
+  --color-muted: #a09880;
+
+  --color-action-hit: #1e7a2a;
+  --color-action-stand: #a02020;
+  --color-action-double: #1a4fa0;
+  --color-action-split: #8a5c10;
+  --color-action-surrender: #5c2880;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+}
