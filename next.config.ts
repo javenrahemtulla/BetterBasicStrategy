@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // force rebuild: 1
 };
 
 export default nextConfig;
