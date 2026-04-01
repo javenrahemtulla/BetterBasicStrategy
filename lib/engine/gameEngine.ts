@@ -37,8 +37,9 @@ export function dealNewRound(
   state: GameState,
   shoe: ShoeState,
   rules: RuleSet
-): { state: GameState; shoe: ShoeState } {
-  let s = needsReshuffle(shoe) ? createShoe(shoe.penetrationTrigger) : shoe
+): { state: GameState; shoe: ShoeState; reshuffled: boolean } {
+  const wasReshuffle = needsReshuffle(shoe)
+  let s = wasReshuffle ? createShoe(shoe.penetrationTrigger) : shoe
 
   const spots: SpotState[] = Array.from({ length: rules.numberOfSpots }, (_, i) =>
     makeSpot(`spot-${i}-${Date.now()}`)
@@ -79,14 +80,15 @@ export function dealNewRound(
 
   // If all spots are blackjack, go straight to dealer
   if (spots.every(sp => sp.isComplete)) {
-    return playDealer({ ...newState }, s, rules)
+    const r = playDealer({ ...newState }, s, rules)
+    return { ...r, reshuffled: wasReshuffle }
   }
 
   // Advance past complete spots (blackjacks)
   const first = spots.findIndex(sp => !sp.isComplete)
   newState.activeSpotIndex = first >= 0 ? first : 0
 
-  return { state: newState, shoe: s }
+  return { state: newState, shoe: s, reshuffled: wasReshuffle }
 }
 
 // ─── Player Actions ────────────────────────────────────────────────────────────

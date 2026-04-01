@@ -149,12 +149,22 @@ export interface HandRecord {
 
 // ─── Stats ────────────────────────────────────────────────────────────────────
 
+export interface OutcomeCounts {
+  wins: number
+  losses: number
+  pushes: number
+  blackjacks: number
+  surrenders: number
+}
+
 export interface StatsData {
   lifetimeHands: number
   lifetimeDecisions: number
   lifetimeAccuracy: number
   currentStreak: number
   longestStreak: number
+  shoesPlayed: number
+  outcomeCounts: OutcomeCounts
   accuracyByHandType: { label: string; accuracy: number; total: number }[]
   accuracyByDealerUpcard: { rank: string; accuracy: number; total: number }[]
   topMistakes: { label: string; count: number; correctAction: string }[]

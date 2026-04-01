@@ -47,11 +47,30 @@ export default function StatsPage() {
           <SummaryCard title="ACCURACY" value={`${Math.round(stats?.lifetimeAccuracy ?? 0)}%`} highlight />
         </div>
 
-        {/* Streaks */}
-        <div className="grid grid-cols-2 gap-3">
-          <SummaryCard title="CURRENT STREAK" value={`${stats?.currentStreak ?? 0} ✓`} />
+        {/* Streaks + Shoes */}
+        <div className="grid grid-cols-3 gap-3">
+          <SummaryCard title="STREAK" value={`${stats?.currentStreak ?? 0} ✓`} />
           <SummaryCard title="BEST STREAK" value={`${stats?.longestStreak ?? 0} ✓`} />
+          <SummaryCard title="SHOES" value={String(stats?.shoesPlayed ?? 0)} />
         </div>
+
+        {/* Outcome breakdown */}
+        <Section title="HAND OUTCOMES">
+          <div className="grid grid-cols-5 gap-2 text-center">
+            {[
+              { label: 'Win', value: stats?.outcomeCounts?.wins ?? 0, color: '#27ae60' },
+              { label: 'Loss', value: stats?.outcomeCounts?.losses ?? 0, color: '#c0392b' },
+              { label: 'Push', value: stats?.outcomeCounts?.pushes ?? 0, color: '#a09880' },
+              { label: 'BJ', value: stats?.outcomeCounts?.blackjacks ?? 0, color: '#b89a4d' },
+              { label: 'Surr.', value: stats?.outcomeCounts?.surrenders ?? 0, color: '#8e44ad' },
+            ].map(({ label, value, color }) => (
+              <div key={label} className="rounded-lg py-3" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
+                <div className="text-lg font-bold" style={{ color }}>{value}</div>
+                <div className="text-[10px] text-[#a09880] font-semibold mt-0.5">{label}</div>
+              </div>
+            ))}
+          </div>
+        </Section>
 
         {/* Accuracy by hand type */}
         <Section title="ACCURACY BY HAND TYPE">

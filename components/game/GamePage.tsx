@@ -65,7 +65,14 @@ export default function GamePage() {
     const result = dealNewRound(game, shoe, rules)
     setGame(result.state)
     setShoe(result.shoe)
-  }, [shoe, engine, game, rules])
+    if (result.reshuffled && user) {
+      fetch('/api/shoe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: user.id }),
+      })
+    }
+  }, [shoe, engine, game, rules, user])
 
   const handleAction = useCallback((category: DecisionCategory) => {
     if (!shoe || !engine) return

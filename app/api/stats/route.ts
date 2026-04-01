@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   const userId = req.nextUrl.searchParams.get('user_id')
   if (!userId) return NextResponse.json({ error: 'user_id required' }, { status: 400 })
 
-  const [sessionsRes, handsRes] = await Promise.all([
+  const [sessionsRes, handsRes, shoesRes] = await Promise.all([
     supabase
       .from('game_sessions')
       .select('*')
@@ -19,17 +19,36 @@ export async function GET(req: NextRequest) {
       .select('*')
       .eq('user_id', userId)
       .order('timestamp', { ascending: true }),
+    supabase
+      .from('shoe_events')
+      .select('id', { count: 'exact' })
+      .eq('user_id', userId),
   ])
 
   if (sessionsRes.error) return NextResponse.json({ error: sessionsRes.error.message }, { status: 500 })
 
   const sessions = sessionsRes.data ?? []
   const hands = handsRes.data ?? []
+  const shoesPlayed = shoesRes.count ?? 0
 
-  // Lifetime totals
-  const lifetimeHands = sessions.reduce((a, s) => a + s.hands_played, 0)
-  const totalCorrect = sessions.reduce((a, s) => a + s.correct_decisions, 0)
-  const totalIncorrect = sessions.reduce((a, s) => a + s.incorrect_decisions, 0)
+  // Derive totals directly from hand records
+  const lifetimeHands = hands.length
+  let totalCorrect = 0, totalIncorrect = 0
+  const outcomeCounts = { wins: 0, losses: 0, pushes: 0, blackjacks: 0, surrenders: 0 }
+
+  for (const hand of hands) {
+    for (const action of (hand.actions_taken ?? [])) {
+      if (action.wasCorrect) totalCorrect++
+      else totalIncorrect++
+    }
+    const outcome = hand.outcome as string
+    if (outcome === 'win') outcomeCounts.wins++
+    else if (outcome === 'lose' || outcome === 'bust') outcomeCounts.losses++
+    else if (outcome === 'push') outcomeCounts.pushes++
+    else if (outcome === 'blackjack') outcomeCounts.blackjacks++
+    else if (outcome === 'surrender') outcomeCounts.surrenders++
+  }
+
   const lifetimeDecisions = totalCorrect + totalIncorrect
   const lifetimeAccuracy = lifetimeDecisions > 0 ? (totalCorrect / lifetimeDecisions) * 100 : 0
 
@@ -94,6 +113,8 @@ export async function GET(req: NextRequest) {
     lifetimeAccuracy,
     currentStreak,
     longestStreak,
+    shoesPlayed,
+    outcomeCounts,
     accuracyByHandType,
     accuracyByDealerUpcard,
     topMistakes,

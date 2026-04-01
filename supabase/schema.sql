@@ -35,7 +35,14 @@ create table if not exists hand_records (
   was_surrendered boolean not null default false
 );
 
+create table if not exists shoe_events (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  started_at timestamptz default now()
+);
+
 -- Indexes
+create index if not exists idx_shoe_events_user on shoe_events(user_id);
 create index if not exists idx_sessions_user on game_sessions(user_id);
 create index if not exists idx_hands_user on hand_records(user_id);
 create index if not exists idx_hands_session on hand_records(session_id);
@@ -48,3 +55,6 @@ alter table hand_records enable row level security;
 create policy "public read/write users" on users for all using (true) with check (true);
 create policy "public read/write sessions" on game_sessions for all using (true) with check (true);
 create policy "public read/write hands" on hand_records for all using (true) with check (true);
+
+alter table shoe_events enable row level security;
+create policy "public read/write shoe_events" on shoe_events for all using (true) with check (true);
