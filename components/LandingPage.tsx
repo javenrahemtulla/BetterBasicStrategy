@@ -23,8 +23,10 @@ export default function LandingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: clean }),
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
+      const text = await res.text()
+      if (!text) throw new Error(`Server error (${res.status}) — check Vercel env vars`)
+      const data = JSON.parse(text)
+      if (!res.ok) throw new Error(data.error ?? `Server error ${res.status}`)
 
       // Store user in sessionStorage for the game
       sessionStorage.setItem('bbs_user', JSON.stringify(data.user))

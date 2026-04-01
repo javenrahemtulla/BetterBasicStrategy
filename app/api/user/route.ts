@@ -21,17 +21,20 @@ export async function GET(req: NextRequest) {
 
 // POST /api/user  { username }
 export async function POST(req: NextRequest) {
-  const { username } = await req.json()
-  const clean = username?.toLowerCase().trim()
-  if (!clean) return NextResponse.json({ error: 'username required' }, { status: 400 })
+  try {
+    const { username } = await req.json()
+    const clean = username?.toLowerCase().trim()
+    if (!clean) return NextResponse.json({ error: 'username required' }, { status: 400 })
 
-  // Upsert: return existing or create new
-  const { data, error } = await supabase
-    .from('users')
-    .upsert({ username: clean }, { onConflict: 'username' })
-    .select()
-    .single()
+    const { data, error } = await supabase
+      .from('users')
+      .upsert({ username: clean }, { onConflict: 'username' })
+      .select()
+      .single()
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ user: data })
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ user: data })
+  } catch (err) {
+    return NextResponse.json({ error: String(err) }, { status: 500 })
+  }
 }
