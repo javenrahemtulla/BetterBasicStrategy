@@ -1,0 +1,43 @@
+# XcodeGen project spec — alternative to the committed .xcodeproj
+# Install: brew install xcodegen
+# Usage:   cd ios && xcodegen generate
+
+name: BetterBasicStrategy
+options:
+  bundleIdPrefix: com.betterbasicstrategy
+  deploymentTarget:
+    iOS: "16.0"
+  xcodeVersion: "15.0"
+  defaultConfig: Debug
+  generateEmptyDirectories: false
+
+targets:
+  BetterBasicStrategy:
+    type: application
+    platform: iOS
+    sources:
+      - path: BetterBasicStrategy
+        excludes:
+          - "**/*.plist"
+    resources:
+      - path: BetterBasicStrategy/Assets.xcassets
+      - path: BetterBasicStrategy/Preview Content
+    settings:
+      base:
+        SWIFT_VERSION: "5.0"
+        IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+        INFOPLIST_FILE: BetterBasicStrategy/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.betterbasicstrategy.BetterBasicStrategy
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1,2"
+      configs:
+        Debug:
+          DEBUG_INFORMATION_FORMAT: dwarf
+          SWIFT_OPTIMIZATION_LEVEL: "-Onone"
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+        Release:
+          DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
+          SWIFT_OPTIMIZATION_LEVEL: "-O"
+          SWIFT_COMPILATION_MODE: wholemodule
